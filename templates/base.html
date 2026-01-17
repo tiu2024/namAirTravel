@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}NamAirTravel{% endblock %}</title>
+    <script src="{% static 'htmx.min.js' %}" defer></script>
+    <link href="{% static 'css/output.css' %}" rel="stylesheet">
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-100 text-gray-900 font-sans" hx-boost="true">
+    
+    {% include 'navbar.html' %}
+
+    <main class="container mx-auto p-4">
+        {% if messages %}
+            <div id="messages" class="mb-4">
+                {% for message in messages %}
+                    <div class="p-4 mb-2 rounded {% if message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-gray-800 text-white p-4 mt-8 text-center text-sm">
+        &copy; {% now "Y" %} NamAirTravel. All rights reserved.
+    </footer>
+</body>
+</html>

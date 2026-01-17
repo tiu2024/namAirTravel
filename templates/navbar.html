@@ -1,0 +1,17 @@
+<nav class="bg-blue-600 text-white shadow-md">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <a href="/" class="text-xl font-bold tracking-tight">NamAirTravel</a>
+
+        <div class="space-x-4">
+            {% if user.is_authenticated %}
+            <span class="text-sm opacity-90">Hello, {{ user.username }} ({{ user.role }})</span>
+            {% if user.is_staff %}
+            <a href="{% url 'admin:index' %}" class="hover:text-blue-200">Admin</a>
+            {% endif %}
+            <!-- Logout would go here -->
+            {% else %}
+            <a href="#" class="hover:text-blue-200">Login</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
