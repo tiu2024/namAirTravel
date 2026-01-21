@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Supplier Balance - {{ supplier.name }} - NamAirTravel{% endblock %}
+
+{% block content %}
+<div class="w-full px-8 py-10">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+        <div>
+            <h1 class="text-3xl font-bold font-display text-slate-900 tracking-tight">{{ supplier.name }}</h1>
+            <p class="mt-2 text-slate-500">Sales history and balance overview</p>
+        </div>
+        <!-- Return to Sales List Button -->
+        <a href="{% url 'sales_list' %}"
+            class="inline-flex items-center px-4 py-2 border border-slate-300 shadow-sm text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            <svg class="-ml-1 mr-2 h-5 w-5 text-slate-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd"
+                    d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                    clip-rule="evenodd" />
+            </svg>
+            Back to Sales
+        </a>
+    </div>
+
+    <div class="bg-white shadow-xl shadow-slate-200/60 rounded-2xl border border-slate-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-slate-100">
+                <thead class="bg-slate-50/50">
+                    <tr>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">
+                            Date</th>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">
+                            Ticket Type</th>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">
+                            Destination</th>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                            Comment</th>
+                        <th scope="col"
+                            class="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">
+                            Qty</th>
+                        <th scope="col"
+                            class="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">
+                            Acquired Cost</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 bg-white">
+                    {% for sale in sales %}
+                    <tr class="hover:bg-slate-50/80 transition-colors duration-150 ease-in-out">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
+                            {{ sale.date|date:"M d, Y" }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            <span
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800 border border-slate-200">
+                                {{ sale.get_ticket_type_display }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900 font-medium">
+                            {{ sale.destination }}
+                        </td>
+                        <td class="px-6 py-4 text-sm text-slate-400 min-w-[200px]">
+                            {{ sale.comment|default:"-" }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 text-right">
+                            {{ sale.quantity }}
+                        </td>
+                        <td
+                            class="px-6 py-4 whitespace-nowrap text-sm text-slate-900 font-medium text-right tabular-nums">
+                            {{ sale.total_purchase_cost|floatformat:2 }} <span
+                                class="text-xs text-slate-400 font-normal">{{ sale.purchase_currency }}</span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="px-6 py-12 text-center">
+                            <svg class="mx-auto h-12 w-12 text-slate-300" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <h3 class="mt-2 text-sm font-medium text-slate-900">No sales found</h3>
+                            <p class="mt-1 text-sm text-slate-500">This supplier has no associated sales transactions.
+                            </p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Balance Summary Cards -->
+    <div class="flex justify-center flex-wrap gap-10 mt-8">
+        <!-- UZS Debt Card -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 min-w-[280px]">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Balance (UZS)</p>
+                    <p
+                        class="mt-1 text-2xl font-bold {% if supplier.balance_uzs > 0 %}text-emerald-600{% else %}text-rose-600{% endif %}">
+                        {{ supplier.balance_uzs|floatformat:2 }}
+                    </p>
+                    <p class="text-xs text-slate-400 mt-1">
+                        {% if supplier.balance_uzs > 0 %}Amount we owe{% else %}Amount supplier owes us{% endif %}</p>
+                </div>
+                <div class="p-3 bg-slate-50 rounded-xl">
+                    <span class="text-slate-600 font-bold">UZS</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- USD Debt Card -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 min-w-[280px]">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Balance (USD)</p>
+                    <p
+                        class="mt-1 text-2xl font-bold {% if supplier.balance_usd > 0 %}text-emerald-600{% else %}text-rose-600{% endif %}">
+                        {{ supplier.balance_usd|floatformat:2 }}
+                    </p>
+                    <p class="text-xs text-slate-400 mt-1">
+                        {% if supplier.balance_usd > 0 %}Amount we owe{% else %}Amount supplier owes us{% endif %}
+                    </p>
+                </div>
+                <div class="p-3 bg-slate-50 rounded-xl">
+                    <span class="text-slate-600 font-bold">USD</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <div class="mt-8 flex justify-center">
+        <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}"
+                class="relative inline-flex items-center rounded-l-md px-2 py-2 text-slate-400 ring-1 ring-inset ring-slate-300 hover:bg-slate-50 focus:z-20 focus:outline-offset-0">
+                <span class="sr-only">Previous</span>
+                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd"
+                        d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
+                        clip-rule="evenodd" />
+                </svg>
+            </a>
+            {% endif %}
+
+            {% for i in paginator.page_range %}
+            {% if page_obj.number == i %}
+            <span
+                class="relative z-10 inline-flex items-center bg-blue-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">{{
+                i }}</span>
+            {% else %}
+            <a href="?page={{ i }}"
+                class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-slate-900 ring-1 ring-inset ring-slate-300 hover:bg-slate-50 focus:z-20 focus:outline-offset-0">{{
+                i }}</a>
+            {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}"
+                class="relative inline-flex items-center rounded-r-md px-2 py-2 text-slate-400 ring-1 ring-inset ring-slate-300 hover:bg-slate-50 focus:z-20 focus:outline-offset-0">
+                <span class="sr-only">Next</span>
+                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd"
+                        d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                        clip-rule="evenodd" />
+                </svg>
+            </a>
+            {% endif %}
+        </nav>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
