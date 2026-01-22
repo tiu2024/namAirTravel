@@ -1,3 +1,23 @@
+# Session Summary: Login & Logout Feature
+
+Implemented secure authentication flow with role-based redirection.
+
+## Tasks Completed
+- [x] **Authentication Logic**: Created `CustomLoginView` in `users/views.py` ensuring Salesmen are redirected to the Sales page.
+- [x] **URL Routing**: set up `login/` and `logout/` paths in `users/urls.py` and included them in root URLs.
+- [x] **Templates**: 
+    - Designed `templates/registration/login.html` with Tailwind CSS and glassmorphism.
+    - Updated `navbar.html` to show user info and logout button when authenticated.
+- [x] **Settings**: Configured `LOGIN_URL`, `LOGIN_REDIRECT_URL`, and `LOGOUT_REDIRECT_URL`.
+
+## Modified/Created Files
+- `users/views.py` (New)
+- `users/urls.py` (New)
+- `namAirTravel/urls.py` (Modified)
+- `namAirTravel/settings.py` (Modified)
+- `templates/registration/login.html` (New)
+- `templates/navbar.html` (Modified)
+
 # Session Summary: Project Initialization
 
 Initialized the `namAirTravel` Django project with a structure optimized for "Locality of Behavior". Configured core dependencies (PostgreSQL, Tailwind CSS, HTMX) and authentication.
@@ -54,3 +74,20 @@ Enhancements to the Sales List view including profit tracking, role-based visibi
 - `templates/agency/sales_list.html` (UI)
 - `scripts/generate_sales.py` (Script)
 - `scripts/verify_features.py` (Script)
+
+# Session Summary: Supplier Balance Feature
+
+Implemented a dedicated Supplier Balance view to track debts and sales history per supplier. This feature provides a detailed ledger of tickets acquired from a specific supplier and displays the current outstanding balance in both UZS and USD with visual status indicators.
+
+## Tasks Completed
+- [x] **Supplier Balance View**: Created `SupplierBalanceView` in `agency/views.py` to filter sales by supplier and calculate totals.
+- [x] **Routing**: Configured URL path `suppliers/<int:pk>/balance/` in `agency/urls.py`.
+- [x] **UI Implementation**: Created `templates/agency/supplier_balance.html` mirroring the `sales_list` aesthetic.
+- [x] **Balance Cards**: Added summary cards for UZS and USD debt, positioned below the table.
+- [x] **Visual Logic**: Applied conditional formatting (Green = We Owe / Debt, Red = Supplier Owes / Credit) to clear up financial context.
+- [x] **Navigation**: Added a responsive "Back to Sales" button for easier navigation.
+
+## Modified/Created Files
+- `agency/views.py` (View Logic)
+- `agency/urls.py` (URL Routing)
+- `templates/agency/supplier_balance.html` (Template)
