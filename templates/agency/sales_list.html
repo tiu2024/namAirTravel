@@ -11,214 +11,62 @@
         <!-- Placeholder for future add sale button -->
     </div>
 
-    <div class="bg-white shadow-xl shadow-slate-200/60 rounded-2xl border border-slate-100 overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-slate-100">
-                <thead class="bg-slate-50/50">
-                    <tr>
-                        <th scope="col"
-                            class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">
-                            Date</th>
-                        {% if user.is_super_admin or user.is_accountant %}
-                        <th scope="col"
-                            class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">
-                            Salesman</th>
-                        {% endif %}
-                        <th scope="col"
-                            class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">
-                            Supplier</th>
-                        <th scope="col"
-                            class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">
-                            Ticket Type</th>
-                        <th scope="col"
-                            class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">
-                            Destination</th>
-                        <th scope="col"
-                            class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                            Comment</th>
-                        <th scope="col"
-                            class="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">
-                            Qty</th>
-                        <th scope="col"
-                            class="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">
-                            Acquired</th>
-                        <th scope="col"
-                            class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">
-                            Client</th>
-                        <th scope="col"
-                            class="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">
-                            Sold</th>
-                        <th scope="col"
-                            class="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">
-                            Profit</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100 bg-white">
-                    {% for sale in sales %}
-                    <tr class="hover:bg-slate-50/80 transition-colors duration-150 ease-in-out group">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
-                            {{ sale.date|date:"M d, Y" }}
-                        </td>
-                        {% if user.is_super_admin or user.is_accountant %}
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                            {{ sale.salesman.username }}
-                        </td>
-                        {% endif %}
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                            {{ sale.supplier.name }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm">
-                            <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800 border border-slate-200">
-                                {{ sale.get_ticket_type_display }}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900 font-medium">
-                            {{ sale.destination }}
-                        </td>
-                        <td
-                            class="px-6 py-4 text-sm text-slate-400 group-hover:text-slate-500 transition-colors min-w-[200px]">
-                            <span class="block" title="{{ sale.comment }}">
-                                {{ sale.comment|default:"-" }}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 text-right">
-                            {{ sale.quantity }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 text-right tabular-nums">
-                            {{ sale.total_purchase_cost|floatformat:2 }} <span
-                                class="text-xs text-slate-400 font-normal"> {{ sale.purchase_currency }}</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm">
-                            {% if sale.sales_channel == 'AGENT' %}
-                            <div class="flex items-center">
-                                <div class="h-2 w-2 rounded-full bg-blue-500 mr-2"></div>
-                                <span class="text-slate-700 font-medium">{{ sale.agent.name }}</span>
-                            </div>
-                            {% else %}
-                            <div class="flex items-center">
-                                <div class="h-2 w-2 rounded-full bg-emerald-500 mr-2"></div>
-                                <span class="text-slate-700">Individual</span>
-                            </div>
-                            {% endif %}
-                        </td>
-                        <td
-                            class="px-6 py-4 whitespace-nowrap text-sm text-slate-900 font-semibold text-right tabular-nums">
-                            {{ sale.total_sold_price|floatformat:2 }} <span
-                                class="text-xs text-slate-400 font-normal">{{ sale.sold_currency }}</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-right font-medium">
-                            {% if sale.profit_usd != 0 %}
-                            <div
-                                class="{% if sale.profit_usd >= 0 %}text-emerald-600{% else %}text-rose-600{% endif %}">
-                                {{ sale.profit_usd|floatformat:2 }} USD
-                            </div>
-                            {% endif %}
-                            {% if sale.profit_uzs != 0 %}
-                            <div
-                                class="{% if sale.profit_uzs >= 0 %}text-emerald-600{% else %}text-rose-600{% endif %}">
-                                {{ sale.profit_uzs|floatformat:2 }} UZS
-                            </div>
-                            {% endif %}
-                            {% if sale.profit_usd == 0 and sale.profit_uzs == 0 %}
-                            <span class="text-slate-300">-</span>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="10" class="px-6 py-12 text-center">
-                            <svg class="mx-auto h-12 w-12 text-slate-300" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
-                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                            <h3 class="mt-2 text-sm font-medium text-slate-900">No sales found</h3>
-                            <p class="mt-1 text-sm text-slate-500">Get started by recording a new sale.</p>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- Profit Summary Cards -->
-    <div class="flex justify-end mt-4 gap-4">
-        <!-- UZS Profit Card -->
-        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 min-w-[240px]">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-medium text-slate-500 uppercase">Total Profit (UZS)</p>
-                    <p class="mt-1 text-xl font-bold text-slate-900">{{ total_profit_uzs|floatformat:2 }}</p>
-                </div>
-                <div class="p-2 bg-emerald-50 rounded-lg">
-                    <svg class="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </div>
+    <!-- Filter Form -->
+    <div class="mb-6 bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+        <form id="filter-form" hx-get="{% url 'sales_list' %}" hx-target="#sales-list-container"
+            hx-include="#filter-form" hx-push-url="true" hx-trigger="change delay:200ms"
+            class="flex flex-wrap gap-4 items-end">
+            {% if form.errors %}
+            <div class="w-full text-red-600 text-sm mb-2 p-2 bg-red-50 rounded">
+                <p class="font-bold">Invalid Filters:</p>
+                {{ form.errors }}
             </div>
-        </div>
+            {% endif %}
 
-        <!-- USD Profit Card -->
-        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 min-w-[240px]">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-medium text-slate-500 uppercase">Total Profit (USD)</p>
-                    <p class="mt-1 text-xl font-bold text-slate-900">{{ total_profit_usd|floatformat:2 }}</p>
-                </div>
-                <div class="p-2 bg-blue-50 rounded-lg">
-                    <svg class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </div>
+            <div class="flex flex-col gap-1">
+                <label for="{{ form.date.id_for_label }}"
+                    class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Date</label>
+                {{ form.date }}
             </div>
-        </div>
+
+            {% if form.salesman %}
+            <div class="flex flex-col gap-1">
+                <label for="{{ form.salesman.id_for_label }}"
+                    class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Salesman</label>
+                {{ form.salesman }}
+            </div>
+            {% endif %}
+
+            <div class="flex flex-col gap-1">
+                <label for="{{ form.supplier.id_for_label }}"
+                    class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Supplier</label>
+                {{ form.supplier }}
+            </div>
+
+            <div class="flex flex-col gap-1">
+                <label for="{{ form.ticket_type.id_for_label }}"
+                    class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Type</label>
+                {{ form.ticket_type }}
+            </div>
+
+            <div class="flex flex-col gap-1">
+                <label for="{{ form.currency.id_for_label }}"
+                    class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Currency</label>
+                {{ form.currency }}
+            </div>
+
+            <div class="pb-1">
+                <a href="{% url 'sales_list' %}"
+                    class="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors">
+                    Reset Filters
+                </a>
+            </div>
+        </form>
     </div>
 
-    <!-- Pagination -->
-    {% if is_paginated %}
-    <div class="mt-8 flex justify-center">
-        <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-            {% if page_obj.has_previous %}
-            <a href="?page={{ page_obj.previous_page_number }}"
-                class="relative inline-flex items-center rounded-l-md px-2 py-2 text-slate-400 ring-1 ring-inset ring-slate-300 hover:bg-slate-50 focus:z-20 focus:outline-offset-0">
-                <span class="sr-only">Previous</span>
-                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path fill-rule="evenodd"
-                        d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
-                        clip-rule="evenodd" />
-                </svg>
-            </a>
-            {% endif %}
-
-            {% for i in paginator.page_range %}
-            {% if page_obj.number == i %}
-            <span
-                class="relative z-10 inline-flex items-center bg-blue-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
-                {{ i }}</span>
-            {% else %}
-            <a href="?page={{ i }}"
-                class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-slate-900 ring-1 ring-inset ring-slate-300 hover:bg-slate-50 focus:z-20 focus:outline-offset-0">
-                {{ i }}</a>
-            {% endif %}
-            {% endfor %}
-
-            {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}"
-                class="relative inline-flex items-center rounded-r-md px-2 py-2 text-slate-400 ring-1 ring-inset ring-slate-300 hover:bg-slate-50 focus:z-20 focus:outline-offset-0">
-                <span class="sr-only">Next</span>
-                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path fill-rule="evenodd"
-                        d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
-                        clip-rule="evenodd" />
-                </svg>
-            </a>
-            {% endif %}
-        </nav>
+    <div id="sales-list-container">
+        {% include 'agency/partials/sales_table.html' %}
     </div>
-    {% endif %}
 </div>
+
 {% endblock %}
